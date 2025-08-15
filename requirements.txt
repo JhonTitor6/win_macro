@@ -1,0 +1,6 @@
+aircv==1.4.6
+loguru==0.7.3
+mss==10.0.0
+numpy==1.26.4
+Pillow==11.1.0
+pywin32==308

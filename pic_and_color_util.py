@@ -208,14 +208,14 @@ def bg_find_pic(hwnd, small_picture_path, x0=0, y0=0, x1=99999, y1=99999, simila
 
     template_name = Path(small_picture_path).stem
 
-    debug_val_threashold = 0.5
+    debug_val_threshold = 0.6
     # 调试模式处理
-    if config.DEBUG and max_val >= debug_val_threashold:
+    if config.DEBUG and max_val >= debug_val_threshold:
         template_dir = debug_img_base_dir / template_name
         template_dir.mkdir(parents=True, exist_ok=True)
         debug_img = search_img.copy()
-        temp_max_loc = max_loc
 
+        border_size = 0
         # 如果图片太小则扩大画布（上下左右各加50像素）
         if debug_img.shape[0] < 100 or debug_img.shape[1] < 100:
             border_size = 50
@@ -227,13 +227,12 @@ def bg_find_pic(hwnd, small_picture_path, x0=0, y0=0, x1=99999, y1=99999, simila
                 right=100,  # 右侧多留空间显示文字
                 borderType=cv2.BORDER_CONSTANT,
                 value=(0, 0, 0))  # 黑色背景
-            temp_max_loc = (max_loc[0] + border_size, max_loc[1] + border_size)
 
         # 绘制匹配矩形
         cv2.rectangle(
             debug_img,
-            (temp_max_loc[0], temp_max_loc[1]),
-            (temp_max_loc[0] + w, temp_max_loc[1] + h),
+            (max_loc[0] + border_size, max_loc[1] + border_size),
+            (max_loc[0] + border_size + w, max_loc[1] + border_size + h),
             (0, 255, 0),
             1
         )
@@ -261,7 +260,7 @@ def bg_find_pic(hwnd, small_picture_path, x0=0, y0=0, x1=99999, y1=99999, simila
             f"匹配成功: {template_name} | 位置: ({center_x}, {center_y}) | 相似度: {max_val:.4f} | 阈值: {similarity}")
         return (center_x, center_y)
 
-    if max_val >= debug_val_threashold:
+    if max_val >= debug_val_threshold:
         logger.debug(
             f"匹配失败: {template_name} | 位置: ({center_x}, {center_y}) | 相似度: {max_val:.4f} | 阈值: {similarity}")
     return -1, -1
