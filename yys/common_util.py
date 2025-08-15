@@ -71,9 +71,9 @@ def close_jia_cheng(hwnd):
     random_sleep(0.5, 0.8)
     success_close_count = 0
     loop_count = 0
-    while loop_count < 30 and success_close_count >= 2:
+    while loop_count < 30 and success_close_count < 2:
         loop_count += 1
-        point = bg_find_pic(hwnd, "images/jia_cheng_ji_huo_zhong.bmp", 630, 100, 830, 480, similarity=0.9)
+        point = bg_find_pic(hwnd, "images/jia_cheng_ji_huo_zhong.bmp", similarity=0.9)
         if bg_left_click_with_range(hwnd, point, x_range=6, y_range=8):
             success_close_count += 1
         random_sleep(0.1, 0.3)

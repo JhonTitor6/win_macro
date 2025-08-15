@@ -14,6 +14,7 @@ logger.add(
     format="{time:YYYY-MM-DD HH:mm:ss.SSS} | {level: <8} | {message}"
 )
 
+
 def click_tiaozhan():
     point = bg_find_pic(hwnd, "images/guibingyanwu_tiaozhan.png")
     return bg_left_click_with_range(hwnd, point, x_range=20, y_range=20)
