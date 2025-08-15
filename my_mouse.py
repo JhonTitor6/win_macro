@@ -1,5 +1,7 @@
 import win32api
 import win32con
+import random
+from loguru import logger
 
 
 def left_click(*position):
@@ -32,7 +34,8 @@ def left_click(*position):
 
     return True
 
-def bg_left_click(hwnd, *position):
+
+def bg_left_click(hwnd, *point):
     """
         后台模拟鼠标左键点击
 
@@ -41,19 +44,19 @@ def bg_left_click(hwnd, *position):
         2. 传入坐标元组：bg_left_click(hwnd, (x, y))
 
         :param hwnd: 窗口句柄
-        :param position: 坐标参数，可以是(x, y)或单独的x,y
+        :param point: 坐标参数，可以是(x, y)或单独的x,y
         :return: 操作是否成功
         """
-    if position is None or (len(position) == 1 and position[0] is None):
+    if point is None or (len(point) == 1 and point[0] is None):
         return False
 
     # 解析坐标参数
-    if len(position) == 1 and isinstance(position[0], (tuple, list)):
+    if len(point) == 1 and isinstance(point[0], (tuple, list)):
         # 传入的是元组/列表形式 (x,y)
-        x, y = position[0]
-    elif len(position) == 2:
+        x, y = point[0]
+    elif len(point) == 2:
         # 传入的是x,y两个参数
-        x, y = position
+        x, y = point
     else:
         raise ValueError("坐标参数格式错误，请使用(x,y)或x,y两种形式")
 
@@ -69,3 +72,20 @@ def bg_left_click(hwnd, *position):
     win32api.SendMessage(hwnd, win32con.WM_LBUTTONUP, win32con.MK_LBUTTON, long_position)  # 模拟鼠标弹起
 
     return True
+
+
+def bg_left_click_with_range(hwnd, point, x_range=10, y_range=10):
+    """
+    在指定点周围随机范围内左键点击
+
+    参数:
+        hwnd: 窗口句柄
+        point: 基准点坐标 (x, y)
+        range: 随机范围半径（默认10像素）
+    """
+    if point and point != (-1, -1):
+        x = random.randint(point[0] - x_range, point[0] + x_range)
+        y = random.randint(point[1] - y_range, point[1] + y_range)
+        logger.debug(f"在基准点 {point} 周围随机点击: x={x}, y={y}")
+        return bg_left_click(hwnd, x, y)
+    return False

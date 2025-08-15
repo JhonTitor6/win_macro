@@ -8,7 +8,6 @@ import aircv
 import cv2
 import mss
 import numpy as np
-import win32con
 import win32gui
 import win32ui
 from PIL import ImageGrab
@@ -287,14 +286,14 @@ def _capture_window_region(hwnd, x0=0, y0=0, x1=99999, y1=99999):
     返回:
         (裁剪后的图像, 实际有效的x0, y0)
     """
-    # 获取窗口客户区大小
+    # 获取窗口客户区大小，用于截图
     client_rect = win32gui.GetClientRect(hwnd)
-    client_width = client_rect[2] - client_rect[0]
-    client_height = client_rect[3] - client_rect[1]
+    client_width = client_rect[2] - client_rect[0] + 8
+    client_height = client_rect[3] - client_rect[1] + 31
 
-    # 调整搜索区域不超过客户区范围
-    x0 = max(x0, client_rect[0])
-    y0 = max(y0, client_rect[1])
+    # 调整搜索区域不超过客户区范围，用于二次截图
+    x0 = max(x0, client_rect[0]) + 8
+    y0 = max(y0, client_rect[1]) + 31
     x1 = min(x1, client_width)
     y1 = min(y1, client_height)
 
@@ -310,7 +309,9 @@ def _capture_window_region(hwnd, x0=0, y0=0, x1=99999, y1=99999):
     save_dc.SelectObject(save_bitmap)
 
     # 截图时考虑窗口边框偏移（Windows 10+通常为8,31）
-    save_dc.BitBlt((0, 0), (client_width, client_height), mfc_dc, (8, 31), win32con.SRCCOPY)
+    # save_dc.BitBlt((0, 0), (client_width, client_height), mfc_dc, (8, 31), win32con.SRCCOPY)
+    # 阴阳师不支持BitBlt，改用PrintWindow
+    windll.user32.PrintWindow(hwnd, save_dc.GetSafeHdc(), 2)
 
     # 将位图转换为OpenCV格式
     bmp_info = save_bitmap.GetInfo()

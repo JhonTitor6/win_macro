@@ -30,7 +30,7 @@ def click_auto(hwnd):
 
 def click_battle_triangle(hwnd):
     """点击战斗中的三角按钮"""
-    return bg_find_pic_and_click(hwnd, "images/battle_triangle.bmp", 14, 27, 46, 61, 0.88)
+    return bg_find_pic_and_click(hwnd, "images/battle_triangle.bmp", 14, 27, 46, 61, 0.85)
 
 
 def click_team(hwnd):
@@ -40,12 +40,12 @@ def click_team(hwnd):
 
 def click_team_auto_match(hwnd):
     """点击队伍自动匹配"""
-    return bg_find_pic_and_click(hwnd, "images/team_auto_match.bmp", 1050, 190, 1190, 250, 0.7)
+    return bg_find_pic_and_click(hwnd, "images/team_auto_match.bmp", 1000, 190, 1190, 260, 0.7)
 
 
 def click_team_close(hwnd):
     """点击队伍关闭按钮"""
-    return bg_find_pic_and_click(hwnd, "images/team_close.bmp", 1150, 140, 1300, 200, 0.7)
+    return bg_find_pic_and_click(hwnd, "images/team_close.bmp", 1000, 100, 1300, 300, 0.7)
 
 
 def click_zhong_kui(hwnd, similarity):
@@ -67,7 +67,7 @@ def click_task_button(hwnd):
 
 def click_task_zhuo_gui_task(hwnd):
     """点击捉鬼任务"""
-    return bg_find_pic_and_click(hwnd, "images/task_zhuo_gui_task.bmp", similarity=0.8)
+    return bg_find_pic_and_click(hwnd, "images/task_zhuo_gui_task.bmp", similarity=0.7)
 
 
 def click_task_go_now(hwnd):
@@ -95,17 +95,18 @@ def handle_battle_leave(hwnd):
 
 def handle_not_enough_five_man(hwnd):
     """处理不足5人"""
-    if not bg_find_pic(hwnd, "images/not_enough_five_man.bmp", 570, 330, 985, 550):
+    if bg_find_pic(hwnd, "images/not_enough_five_man.bmp", 570, 330, 985, 550)[0] == -1:
         return False
     time.sleep(1)
-    if not bg_find_pic_and_click(hwnd, "images/not_enough_five_man_confirm.bmp", 570, 330, 985, 550):
+
+    if not bg_find_pic_and_click(hwnd, "images/not_enough_five_man_cancel.bmp", 400, 330, 985, 550):
         return False
+    # if not bg_find_pic_and_click(hwnd, "images/not_enough_five_man_confirm.bmp", 570, 330, 985, 550):
+    #     return False
     time.sleep(1)
-    if not click_team_auto_match(hwnd):
-        return False
+    click_team_auto_match(hwnd)
     time.sleep(1)
-    if not click_team_close(hwnd):
-        return False
+    click_team_close(hwnd)
 
 
 def try_click_zhong_kui(hwnd):
@@ -176,27 +177,28 @@ def ghost_hunting(hwnd, max_rounds):
 
     while ghost_hunting_round_count < max_rounds:
         try:
-            if bg_find_pic(hwnd, "images/continue_ghost_hunting_or_not.bmp", similarity=0.8):
+            if bg_find_pic(hwnd, "images/continue_ghost_hunting_or_not.bmp", similarity=0.6)[0] > -1:
                 if click_confirm(hwnd):
                     time.sleep(5)
 
             if click_receive_ghost_hunt_task(hwnd):
                 ghost_hunting_round_count += 1
                 logger.success(f"捉鬼任务第{ghost_hunting_round_count}轮完成 (目标: {max_rounds}轮)")
-                time.sleep(3)
+                time.sleep(1)
                 go_to_zhuo_gui_task(hwnd)
 
             # click_auto(hwnd)
             if try_click_zhong_kui(hwnd):
-                time.sleep(3)
+                time.sleep(5)
                 if click_receive_ghost_hunt_task(hwnd):
                     ghost_hunting_round_count += 1
                     logger.success(f"捉鬼任务第{ghost_hunting_round_count}轮完成 (目标: {max_rounds}轮)")
-                time.sleep(3)
+                time.sleep(1)
                 go_to_zhuo_gui_task(hwnd)
 
             handle_battle_leave(hwnd)
             handle_not_enough_five_man(hwnd)
+            click_team_close(hwnd)
             time.sleep(random.uniform(1, 3))
 
         except Exception as e:
@@ -208,7 +210,7 @@ def get_ghost_hunting_rounds():
     """获取用户输入的捉鬼轮数"""
     while True:
         try:
-            rounds_to_hunt = 12
+            rounds_to_hunt = 10
             rounds = int(input(f"请输入要完成的捉鬼轮数(默认{rounds_to_hunt}轮): ") or rounds_to_hunt)
             if rounds > 0:
                 return rounds

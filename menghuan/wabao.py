@@ -13,12 +13,17 @@ def click_use(hwnd):
     return bg_find_pic_and_click(hwnd, "images/use.bmp", similarity=0.5)
 
 
+def click_team_close(hwnd):
+    """点击队伍关闭按钮"""
+    return bg_find_pic_and_click(hwnd, "images/team_close.bmp", 1000, 100, 1300, 300, 0.7)
+
 def main():
     init()
     hwnd = find_window()
     while True:
-        click_use(hwnd)
+        click_team_close(hwnd)
         time.sleep(1)
+        click_use(hwnd)
 
 
 if __name__ == '__main__':
