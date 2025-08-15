@@ -188,7 +188,7 @@ def bg_find_pic(hwnd, small_picture_path, x0=0, y0=0, x1=99999, y1=99999, simila
         raise FileNotFoundError(f"模板图片不存在: {small_picture_path}")
 
     # 获取窗口区域图像
-    search_img, x0, y0 = _capture_window_region(hwnd, x0, y0, x1, y1)
+    search_img = _capture_window_region(hwnd, x0, y0, x1, y1)
 
     # 读取模板图片
     template = cv2.imread(small_picture_path)
@@ -284,7 +284,7 @@ def _capture_window_region(hwnd, x0=0, y0=0, x1=99999, y1=99999):
         x1, y1: 区域右下角坐标
 
     返回:
-        (裁剪后的图像, 实际有效的x0, y0)
+        裁剪后的图像
     """
     # 获取窗口客户区大小，用于截图
     client_rect = win32gui.GetClientRect(hwnd)
@@ -337,7 +337,7 @@ def _capture_window_region(hwnd, x0=0, y0=0, x1=99999, y1=99999):
         if not source_img_path.exists():
             cv2.imwrite(str(source_img_path), img)
 
-    return search_img, x0, y0
+    return search_img
 
 
 def pil2np(pil_img):

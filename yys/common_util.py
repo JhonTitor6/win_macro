@@ -53,12 +53,15 @@ def click_battle_end_1(hwnd):
 
 def close_jia_cheng(hwnd):
     point = bg_find_pic(hwnd, "images/jia_cheng.bmp")
-    if not bg_left_click_with_range(hwnd, point, x_range=5, y_range=10):
+    if not bg_left_click_with_range(hwnd, point, x_range=10, y_range=10):
         return False
     random_sleep(0.5, 0.8)
-    while True:
-        point = bg_find_pic(hwnd, "images/jia_cheng_ji_huo.bmp")
-        if not bg_left_click_with_range(hwnd, point, x_range=5, y_range=10):
-            break
-        random_sleep(1, 3)
+    success_close_count = 0
+    loop_count = 0
+    while loop_count < 30 or success_close_count >= 2:
+        loop_count += 1
+        point = bg_find_pic(hwnd, "images/jia_cheng_ji_huo_zhong.bmp", 630, 100, 830, 480, similarity=0.9)
+        if bg_left_click_with_range(hwnd, point, x_range=6, y_range=8):
+            success_close_count += 1
+        random_sleep(0.1, 0.3)
     return True
