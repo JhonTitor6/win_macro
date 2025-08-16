@@ -18,10 +18,16 @@ logger.add(
     format="{time:YYYY-MM-DD HH:mm:ss.SSS} | {level: <8} | {message}"
 )
 
+def click_tiaozhan():
+    point = bg_find_pic(hwnd, "images/yuhun_tiaozhan.bmp")
+    return bg_left_click_with_range(hwnd, point, x_range=20, y_range=20)
+
+
 def main():
     max_battle_count = get_max_battle_count()
     cur_battle_count = 0
     while cur_battle_count < max_battle_count:
+        click_tiaozhan()
         if try_handle_battle_end(hwnd):
             cur_battle_count += 1
             logger.success(f"通关次数：{cur_battle_count}")
